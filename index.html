@@ -135,7 +135,7 @@ footer{font-size:13px;color:var(--muted)}
       </div>
 
       <div class="facts">
-        <div><span class="label">Hareket</span><b>6</b><span class="small">+ "Stand still" boşta sınıfı</span></div>
+        <div><span class="label">Örnek</span><b>2.020</b><span class="small">505 kare + kopyaları</span></div>
         <div><span class="label">Süre</span><b>60 sn</b><span class="small">her oyun</span></div>
         <div><span class="label">Puan için</span><b>0,5 sn</b><span class="small">doğru duruşu tut</span></div>
       </div>
@@ -143,10 +143,10 @@ footer{font-size:13px;color:var(--muted)}
       <h3>Nasıl yaptım?</h3>
       <ol>
         <li>Teachable Machine'de bir <b>Pose Project</b> açtım. Bu proje kameradaki insanın eklem noktalarını (omuz, dirsek, bilek, diz…) bulup duruşu sınıflandırıyor.</li>
-        <li>Her İngilizce komut için bir sınıf oluşturdum ve kendi kameramla her duruştan yüzlerce örnek kaydettim. Kayıt sırasında hafifçe yer değiştirdim ki model tek bir pozu ezberlemesin.</li>
+        <li>Her İngilizce komut için bir sınıf oluşturdum. Telefonla her hareketin kısa bir videosunu çektim ve videolardan 505 kare çıkarıp örnek olarak yükledim. Videolar sırasında hafifçe yer değiştirdim ki model tek bir pozu ezberlemesin.</li>
         <li>Hiçbir hareket yapılmadığında yanlış puan vermemesi için bir de <b>"Stand still"</b> (normal duruş) sınıfı ekledim.</li>
-        <li>Modeli eğittim, önizlemede test ettim ve paylaşılabilir linkini aldım.</li>
-        <li>Modeli bu sayfaya bağlayıp üzerine süre, puan, rastgele komut ve sesli okuma ekleyerek bir oyun yaptım.</li>
+        <li>Modeli eğittim. Oyunda kamera görüntüsü aynalandığı ve farklı uzaklıklardan oynanabileceği için örneklerin aynalanmış ve küçültülmüş kopyalarını da ekledim (toplam 2.020 örnek). Eğitimde kullanılmayan karelerle test ettiğimde model 140 karenin 136'sını doğru bildi.</li>
+        <li>Modeli bu sitede barındırıp üzerine süre, puan, rastgele komut ve sesli okuma ekleyerek bir oyun yaptım.</li>
       </ol>
 
       <h3>Derste nasıl kullanılır?</h3>
@@ -155,7 +155,7 @@ footer{font-size:13px;color:var(--muted)}
         <li>Öğrenciler sırayla tahtanın önüne gelip 60 saniyelik oyunu oynar, sınıf puanları tahtaya yazar.</li>
         <li>Oyuncu komutu okuyup anlamak zorunda olduğu için hem dinleme hem okuma çalışılır. Sesli okuma kapatılarak oyun sadece okumaya da çevrilebilir.</li>
       </ol>
-      <p class="small">Sınırlar: Model kamera açısına ve uzaklığa duyarlıdır, oyuncunun dizlerinden başına kadar görünmesi gerekir. Aynı anda kamerada tek kişi olmalıdır. Oyun kameraya izin verilmiş bir tarayıcıda (Chrome, Safari) çalışır; WhatsApp veya Instagram içinden açılan tarayıcılarda kamera çalışmayabilir.</p>
+      <p class="small">Sınırlar: Model tek bir kişinin (benim) videolarıyla eğitildiği için başka kişilerde, farklı odalarda ve kamera açılarında daha az doğru çalışabilir. Oyuncunun baştan ayağa kadrajda görünmesi gerekir; en iyi sonuç yatay tutulan bir kamerayla ve 2-3 metre uzaktan alınır. Aynı anda kamerada tek kişi olmalıdır. Oyun kameraya izin verilmiş bir tarayıcıda (Chrome, Safari) çalışır; WhatsApp veya Instagram içinden açılan tarayıcılarda kamera çalışmayabilir.</p>
     </div>
   </article>
 
@@ -199,7 +199,32 @@ async function loadModel(){
   model = await tmPose.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
   labels = model.getClassLabels();
   moves = labels.filter(l => l !== IDLE);
+  await loadClassifier();
   return model;
+}
+
+// The pose classifier's last step runs in plain JavaScript (float32) so that
+// GPUs with low-precision WebGL give the same answer as everyone else.
+let CLS = null;
+async function loadClassifier(){
+  const mj = await fetch(MODEL_URL + "model.json").then(r => r.json());
+  const buf = await fetch(MODEL_URL + mj.weightsManifest[0].paths[0].replace("./", "")).then(r => r.arrayBuffer());
+  const specs = mj.weightsManifest[0].weights; let off = 0; const w = {};
+  for(const s of specs){ const n = s.shape.reduce((a,b) => a*b, 1); w[s.name] = new Float32Array(buf, off, n); off += n * 4; }
+  const W1 = w[specs[0].name], B1 = w[specs[1].name], W2 = w[specs[2].name];
+  const D = specs[0].shape[0], H = specs[0].shape[1], C = specs[2].shape[1];
+  const rows = []; for(let i = 0; i < D; i++){ for(let h = 0; h < H; h++){ if(W1[i*H+h] !== 0){ rows.push(i); break; } } }
+  CLS = { W1, B1, W2, H, C, rows };
+}
+function classify(x){
+  const { W1, B1, W2, H, C, rows } = CLS;
+  const h = Float32Array.from(B1);
+  for(const i of rows){ const xi = x[i]; if(!xi) continue; const o = i * H; for(let k = 0; k < H; k++) h[k] += xi * W1[o+k]; }
+  const z = new Float32Array(C);
+  for(let k = 0; k < H; k++){ const hk = h[k] > 0 ? h[k] : 0; if(!hk) continue; for(let c = 0; c < C; c++) z[c] += hk * W2[k*C+c]; }
+  let mx = -Infinity; for(const v of z) if(v > mx) mx = v;
+  let sum = 0; const e = Array.from(z, v => { const t = Math.exp(v - mx); sum += t; return t; });
+  return e.map((v, i) => ({ className: labels[i], probability: v / sum }));
 }
 
 async function startCam(){
@@ -229,7 +254,7 @@ async function loop(ts){
   if(!camOn) return;
   webcam.update();
   const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-  const pred = await model.predict(posenetOutput);
+  const pred = classify(posenetOutput);
   ctx.drawImage(webcam.canvas, 0, 0);
   if(pose){ tmPose.drawKeypoints(pose.keypoints, .5, ctx); tmPose.drawSkeleton(pose.keypoints, .5, ctx); }
   let best = pred[0]; for(const p of pred) if(p.probability > best.probability) best = p;
