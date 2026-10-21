@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Eğitimde Yapay Zekâ dersi haftalık çalışmalarım.">
+<title>Eğitimde Yapay Zekâ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a single course-binder column; each week is a sheet with its number on a side tab. */
+:root{
+  --paper:#eef1f6; --sheet:#ffffff; --ink:#18233a; --muted:#5b6578; --rule:#d5dbe6;
+  --accent:#2747c9; --accent-soft:#e3e8fb; --mark:#ffe36b;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Source Sans 3",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#10151f; --sheet:#171e2b; --ink:#e6eaf2; --muted:#98a2b5; --rule:#2a3446;
+  --accent:#8ea2ff; --accent-soft:#222c4a; --mark:#8a7400; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10151f; --sheet:#171e2b; --ink:#e6eaf2; --muted:#98a2b5; --rule:#2a3446;
+  --accent:#8ea2ff; --accent-soft:#222c4a; --mark:#8a7400; color-scheme:dark}
+*{box-sizing:border-box}img{max-width:100%}[hidden]{display:none!important}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:780px;margin:0 auto;padding-block:44px 72px;display:flex;flex-direction:column;gap:30px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+p{margin:0}
+.label{font:500 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:flex;flex-direction:column;gap:12px}
+header h1{font-size:clamp(34px,6.5vw,52px);font-weight:700;letter-spacing:-.02em}
+header h1 span{background:linear-gradient(transparent 62%,var(--mark) 62%);padding-inline:2px}
+header p{color:var(--muted);max-width:62ch}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav a{font:500 13px var(--mono);color:var(--ink);text-decoration:none;border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:6px 12px}
+nav a.on{background:var(--accent);border-color:var(--accent);color:var(--sheet)}
+nav a.off{color:var(--muted);pointer-events:none;border-style:dashed;background:transparent}
+.week{display:grid;grid-template-columns:72px 1fr;background:var(--sheet);border:1px solid var(--rule);border-radius:14px;overflow:hidden}
+.tab{background:var(--accent-soft);display:flex;flex-direction:column;align-items:center;padding-block:22px;gap:4px;border-right:1px solid var(--rule)}
+.tab .n{font:700 34px/1 var(--display);color:var(--accent)}
+.tab .label{font-size:9px}
+.body{padding:24px 26px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.body h2{font-size:clamp(24px,4vw,30px)}
+.meta{display:flex;gap:14px;flex-wrap:wrap;font:500 12px var(--mono);color:var(--muted)}
+.body p{max-width:64ch}
+.body h3{font-size:18px;margin-top:4px}
+.cta{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;background:var(--accent);color:var(--sheet);text-decoration:none;
+  font:600 17px var(--body);padding:12px 20px;border-radius:10px}
+.cta:hover{filter:brightness(1.08)}
+.cta:focus-visible,nav a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.small{font-size:14px;color:var(--muted)}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+.sw{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.sw img{width:100%;aspect-ratio:1;max-width:100%;object-fit:cover;border-radius:10px;border:1px solid var(--rule)}
+.sw b{font:700 16px var(--display)}
+.sw span{font-size:13px;color:var(--muted);margin-top:-6px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.facts div{background:var(--sheet);padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.facts b{font:700 24px var(--display);font-variant-numeric:tabular-nums}
+@media (max-width:520px){.facts{grid-template-columns:1fr}}
+ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;max-width:62ch}
+.later{border:2px dashed var(--rule);border-radius:14px;padding:22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.later .n{font:700 26px var(--display);color:var(--muted)}
+.later p{color:var(--muted)}
+.demo{display:flex;flex-direction:column;gap:14px;border:1px solid var(--rule);border-radius:12px;padding:16px;background:var(--paper)}
+.stage{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:16px;align-items:center}
+@media (max-width:560px){.stage{grid-template-columns:1fr}}
+.cam{aspect-ratio:1;max-width:100%;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cam canvas,.cam img{width:100%;height:100%;object-fit:cover}
+.result{display:flex;flex-direction:column;gap:4px}
+.result b{font:700 clamp(40px,8vw,64px)/1 var(--display);letter-spacing:-.02em}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button.cta{border:0;cursor:pointer}
+.ghost{font:600 16px var(--body);border:1px solid var(--rule);background:var(--sheet);border-radius:10px;padding:11px 16px;cursor:pointer}
+.speak{display:flex;gap:6px;align-items:center;font-size:15px}
+.bars{display:flex;flex-direction:column;gap:6px}
+.bar{display:grid;grid-template-columns:64px 1fr 44px;gap:10px;align-items:center;font-size:14px}
+.bar .t{height:10px;background:var(--rule);border-radius:99px;overflow:hidden}
+.bar .f{height:100%;width:0;border-radius:99px;transition:width .15s}
+.bar .p{font:500 12px var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.bar .f{transition:none}}
+footer{font-size:13px;color:var(--muted)}
+@media (max-width:440px){.week{grid-template-columns:52px 1fr}.tab .n{font-size:26px}.body{padding:18px 16px}}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <div class="label">Eğitimde Yapay Zekâ · 2026–27 Güz · Haftalık çalışmalar</div>
+    <h1><span>Eğitimde Yapay Zekâ</span></h1>
+    <p>Bu sitede her hafta ders kapsamında yaptığım yapay zekâ çalışmalarını paylaşıyorum. Bölümüm İngilizce öğretmenliği; çalışmaları okul öncesi ve ilkokul İngilizce derslerinde kullanılabilecek şekilde hazırlıyorum.</p>
+    <nav aria-label="Haftalar"><a class="on" href="#hafta-1">1. Hafta</a><a class="off" aria-disabled="true">2. Hafta</a><a class="off" aria-disabled="true">3. Hafta</a></nav>
+  </header>
+
+  <article class="week" id="hafta-1">
+    <div class="tab"><span class="label">Hafta</span><span class="n">1</span></div>
+    <div class="body">
+      <div class="label">Teachable Machine · Görüntü modeli</div>
+      <h2>What colour is it? İngilizce renkleri tanıyan model</h2>
+      <div class="meta"><span>21 Ekim 2026</span><span>Hedef: okul öncesi, A1</span></div>
+      <p>Google Teachable Machine ile, kameraya gösterilen nesnenin rengini tanıyıp İngilizce adını veren bir makine öğrenmesi modeli eğittim. Çocuklar sınıftaki bir nesneyi kameraya gösteriyor, model rengin İngilizcesini ekranda gösteriyor, öğretmen de "What colour is it?" sorusuyla etkinliği sürdürüyor.</p>
+
+      <section class="demo" aria-label="Modeli dene">
+        <div class="stage"><div id="cam" class="cam"><span class="small" id="camMsg">Kamera kapalı</span></div>
+          <div class="result"><span class="label">Model diyor ki</span><b id="top">—</b><span class="small" id="topTr"></span></div></div>
+        <div class="btns"><button id="startBtn" type="button" class="cta">Kamerayı aç</button>
+          <label class="ghost" for="photo">Fotoğraf yükle</label><input id="photo" type="file" accept="image/*" hidden>
+          <label class="speak"><input type="checkbox" id="say" checked> Rengi sesli söyle</label></div>
+        <div id="bars" class="bars"></div>
+        <p class="small" id="status">Kamerayı açınca tarayıcı izin isteyecek. Renkli bir nesneyi kameraya yakın tut.</p>
+        <p class="small">Model linki: <a href="https://teachablemachine.withgoogle.com/models/uOaEK4Swk/" target="_blank" rel="noopener">teachablemachine.withgoogle.com/models/uOaEK4Swk</a></p>
+      </section>
+
+      <h3>Model hangi renkleri tanıyor?</h3>
+      <div class="swatches">
+        <div class="sw"><img src="data:image/jpeg;base64,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" alt="Kırmızı örnek görsel"><b>Red</b><span>kırmızı</span></div>
+        <div class="sw"><img src="data:image/jpeg;base64,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" alt="Turuncu örnek görsel"><b>Orange</b><span>turuncu</span></div>
+        <div class="sw"><img src="data:image/jpeg;base64,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" alt="Sarı örnek görsel"><b>Yellow</b><span>sarı</span></div>
+        <div class="sw"><img src="data:image/jpeg;base64,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" alt="Yeşil örnek görsel"><b>Green</b><span>yeşil</span></div>
+        <div class="sw"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAcFBQYFBAcGBgYIBwcICxILCwoKCxYPEA0SGhYbGhkWGRgcICgiHB4mHhgZIzAkJiorLS4tGyIyNTEsNSgsLSz/2wBDAQcICAsJCxULCxUsHRkdLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCz/wAARCABwAHADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDFxSYGKXGDS44968o9cOBxSYpaMUAIOKMcUuOaUCgBvGaDjNL39aMYPvQAmBigAClx7UDGKAE7+9H4UuPrRikAnSgClo4pgLgfjRilA54ox0oASg8UuOcZo7YNIBO1GPWlxRtNaRpzlqkzOVWEXrJCdKMUu33o9qhprRlpp6oTA9cUYxS7c0YpDE/GgDtS8mgigBMDOaMYpecUYxxmmAo4pcZoxxRikAh471GZBnjpTJ5fm2g4pgbHPrX1OW5bHlVWsr32R8jmuaz5nRoO1t2T7ulPDcCoAfenq2K+liklZI+Tk3J3bJwQeopNnXHBpoP609TXPiMHRxMbTXzOnC46thZXpvTt0GEdaMc09huwRTe1fCYvCywtV05H6JgsXDF0lUgJt6UY5paO1cp2iYoXp70uKXpzQAUjnahYdqf9aiuD+4fHpWlJKVSKfcyrScacpLszP35bPrTw1QA/hTwa/Q42Ssj8ylq7snB5qQHNVw1PB5rRMyaJwakU9KrgjFSg9au5m0TBuOaXrUQapcZ5r5vP4rlhPrqfVcOTalUh00DGR2pPpS45oxXyp9iIRznpRil5/GgigBccZpHXchX1FO7YpeKadndCa5lZmEwKOVPY0oJq5f2pJ81B9RVAHFfc4TExxFNSW/U/PMZhZYaq4PboThjT1NQA08N0rtTOBonzz1qRSc1XDcZp6n+dWmRYsIckCrIGP8aigjwNxHJqbn618fm+KVeqoR2ifcZJg5Yek5zWsvyEo7078KPrXinvDaOn4078KTvQAvbrxQKdSY+WkAmOuao3GnB2LRHDenar/wDWj6V0UMRUoS5oM58RhqeIjy1Fcw3gljOGQ5FIA3Tac1ukUFV7qPyr2IZ1JL3onhTyCLfuz09DIjhlc8Kfxq9BaiM5bk1a7YpO1cuIzStWXKtEdmGyehQfNL3n5ifSjvTh1o615R7I3k9Pypc/h6Uv4UDjikAlJ29+1O560dKYCk9qT8KdSUAHbpR1HIo4xS/yoATqKPSjg0o6UgG9D0pcd6O9AA6cUwDt70nT607gCk6jpQAUUoHPFJjn3NAB047fWj3o6ilxQB//2Q==" alt="Mavi örnek görsel"><b>Blue</b><span>mavi</span></div>
+        <div class="sw"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAcFBQYFBAcGBgYIBwcICxILCwoKCxYPEA0SGhYbGhkWGRgcICgiHB4mHhgZIzAkJiorLS4tGyIyNTEsNSgsLSz/2wBDAQcICAsJCxULCxUsHRkdLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCz/wAARCABwAHADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD2n8aPxoo471Yxe1J+FANApAFFB796inuoLVS08yRj/abFNJvRD1ZL2orDufGWhWuQ98hI/u81XTx/4fcgfbBz6it1hqzV+R/caKlN9DpPxoxWbaeItJvOIb6Fie27FaQZXGVII9RWUoSjpJWIcWt0GaPaijNQSH9KO9L9OlIcntQAlLSHrzRQAuagvL23sLdp7iVY0XqTUWqalb6TYPd3DbUQZ+teLeJfFV3r9029yluD8kY9K9LA4CeLlfaPc6sPh5Vn5HU+IPiY5Z4NKQKo481uv4VwV5qt9fyF7m5kkzzy1VM0hPtX11DCUcOrQR7VOjCkvdQhOTzTCaUn3pma3bNGOWR0OUcqfY1u6P421jRZBsuGmj7pIciufJqMn8KwqU4VFaauZyjGSs0e6eGfH+n66qwyEW1z/cY8H6V1ec18wJK8UgdGKsvIIr1XwD4/a7dNL1Nx5nSOQ9/Y183jct9mvaUtux5dfC8vvQPS80Z4pOozQa8M88PwpCwVSWOAOc0tc/411b+yvDc7q2JJf3aY9TWtKm6s1BdS4R55KKPPPHfiR9X1RrWJz9mgOBj+I+tchmhnLMWJyTzTCa/QKNKNCmqcOh9HTgqcVFATzim5oPIpueO2apsq4jH8aaTQTxTCahslilqYWHSgn3ppOB2qGybgTx70kczwyLJGxV1O4EUhPFMJrJslnvfw/wDE48QaKI5mBu7cbXHcj1rregr578B622jeKbdyxEUx8txn1r6DBBUEHg8ivksfh/Y1fd2Z42Ip8k9NmLmvMPirfFrq1sweFBcivT+1eN/E2Vj4pKk8LGAK3yiPNiU+xpglerc44n1ppNKTxTCe9fYtnt3AmmE4oJ96afeobJuGaYxNBNNJzUNkik4HFMJoY45pmeazbJA5600nrQTTSc1DZLHJIY5VcHlSCDX0t4bvft/hyyuc5LxLk18yZr6G+HErS+B7JmOcAgfSvFzRJwTOHFr3UzqOa8e+KEPl+JVk7SRg17D3rzn4sacXs7W+RSdh2Ma48rqKGJV+uhhhJctVHlh4NNJ4pSTmmE19g2e2BNNJoJphJFQ2SwJppNDH1ppas2yWITTSTQTTSahslsC3HNMPvQTTc/lWbYrgTmvov4f2/wBm8E2C8/Mu7mvnmyt2vb+C2jGWlcKPzr6f0q0FhpNtbAYEUYX9K8bM5+7GJwYqWiRc/Ss3xBpa6xolxZkZLqdvsa0uRzRXiRk4SUl0OBNp3R80XltLZXctvMpV422kGq5PrXqfxK8ItMDrFkmWA/fKP515U2fyr7bDYmNempI96lVVSPMIaaaCc00k1q2WBPNMJx70E00mobJYlIT+VBppP0qGybiGmnmgmrujaRc65qkVlaoWeQ8n0HrWUpJK7Jbtudj8KPDr6lr/APaMqfuLXkEjgtXuftWV4a0G38O6LDYwAZAy5x941q18viq3tqjl0PIqz55XFopCefajNcpkJJGssbI6hlYYII615V41+HLxPJf6QhdD8zwjt9K9X/DijINdOHxE8PLmia06sqbuj5blR4pGSRGRl6g8EVESTX0H4h8C6Prys7wiG4P/AC0Tj86811b4VaxZktaFLqMdMcGvoaOYUqqs3ZnpQxMJ76HCE00mtW78M6xZE+dYTLjjOM1UXSdQkYKtnKSeB8tdXtItXTNuZdylnNNJrpLHwH4h1BgI9PdFPd+BXb6B8HVR1m1i43gc+VH/AI1y1cXSp7synWhHdnm+h+HdQ8Q3i29lAzAn5nxwor3jwd4LsvCtl8oEl04+eU/yFbWm6TY6PbLb2NukKD+6OTV3rXiYnGSre6tEefVruei2DoKBSZ60ZrgOc//Z" alt="Mor örnek görsel"><b>Purple</b><span>mor</span></div>
+        <div class="sw"><img src="data:image/jpeg;base64,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" alt="Pembe örnek görsel"><b>Pink</b><span>pembe</span></div>
+      </div>
+
+      <div class="facts">
+        <div><span class="label">Sınıf</span><b>7</b><span class="small">renk</span></div>
+        <div><span class="label">Örnek görsel</span><b>315</b><span class="small">her renk için 45</span></div>
+        <div><span class="label">Eğitim</span><b>50</b><span class="small">epoch</span></div>
+      </div>
+
+      <h3>Nasıl yaptım?</h3>
+      <ol>
+        <li>Teachable Machine'de bir Image Project açtım ve her renk için bir sınıf oluşturdum (Red, Orange, Yellow, Green, Blue, Purple, Pink).</li>
+        <li>Her sınıfa farklı şekil, ton, ışık ve arka planda 45 örnek görsel yükledim. Böylece model sadece tek bir tonu değil, rengin farklı hallerini öğrendi.</li>
+        <li>Modeli eğittim ve önizleme ekranında test ettim.</li>
+        <li>Modeli Teachable Machine'e yükleyip paylaşılabilir bağlantısını aldım.</li>
+      </ol>
+
+      <h3>Derste nasıl kullanılır?</h3>
+      <ol>
+        <li>Öğretmen renkleri flashcard'larla tanıtır.</li>
+        <li>Çocuklar sınıftan bir nesne bulup kameraya gösterir.</li>
+        <li>Model rengi gösterince sınıf hep birlikte söyler: "It's red!"</li>
+      </ol>
+      <p class="small">Sınır: Model ışığa duyarlıdır. Loş ya da sarı ışıkta turuncu ile kırmızıyı, pembe ile moru karıştırabilir. En iyi sonuç için aydınlık ortamda ve düz bir arka plan önünde kullanılmalı.</p>
+    </div>
+  </article>
+
+  <div class="later"><span class="n">2</span><p>2. haftanın çalışması burada yayınlanacak.</p></div>
+
+  <footer>Eğitimde Yapay Zekâ dersi için hazırlandı.</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
+<script>
+const URL_M="https://teachablemachine.withgoogle.com/models/uOaEK4Swk/";
+const TR={Red:"kırmızı",Orange:"turuncu",Yellow:"sarı",Green:"yeşil",Blue:"mavi",Purple:"mor",Pink:"pembe"};
+const COL={Red:"#d63a3a",Orange:"#f08a24",Yellow:"#f2c81b",Green:"#2e9e4f",Blue:"#2f6fdb",Purple:"#8a3fc7",Pink:"#ef7fb6"};
+let model,cam,running=false,last="",lastSaid=0;
+const $=id=>document.getElementById(id);
+async function load(){if(!model){$("status").textContent="Model yükleniyor…";model=await tmImage.load(URL_M+"model.json",URL_M+"metadata.json");buildBars()}return model}
+function buildBars(){$("bars").innerHTML="";model.getClassLabels().forEach(l=>{const r=document.createElement("div");r.className="bar";r.innerHTML='<span></span><div class="t"><div class="f"></div></div><span class="p">0%</span>';r.children[0].textContent=l;r.querySelector(".f").style.background=COL[l]||"var(--accent)";r.dataset.l=l;$("bars").append(r)})}
+function show(pred){let best=pred[0];pred.forEach(p=>{if(p.probability>best.probability)best=p;const r=$("bars").querySelector('[data-l="'+p.className+'"]');if(r){r.querySelector(".f").style.width=(p.probability*100).toFixed(0)+"%";r.querySelector(".p").textContent=(p.probability*100).toFixed(0)+"%"}});
+  const conf=best.probability>.6;$("top").textContent=conf?best.className:"…";$("top").style.color=conf?(COL[best.className]||""):"";$("topTr").textContent=conf?TR[best.className]||"":"Emin değil, nesneyi yaklaştır";
+  if(conf&&$("say").checked&&"speechSynthesis" in window&&(best.className!==last||Date.now()-lastSaid>4000)){last=best.className;lastSaid=Date.now();const u=new SpeechSynthesisUtterance(best.className);u.lang="en-US";speechSynthesis.cancel();speechSynthesis.speak(u)}}
+async function loop(){if(!running)return;cam.update();show(await model.predict(cam.canvas));requestAnimationFrame(loop)}
+$("startBtn").onclick=async()=>{try{
+  if(running){running=false;cam.stop();$("cam").innerHTML='<span class="small">Kamera kapalı</span>';$("startBtn").textContent="Kamerayı aç";return}
+  await load();$("status").textContent="Kamera açılıyor…";cam=new tmImage.Webcam(260,260,true);await cam.setup();await cam.play();
+  $("cam").innerHTML="";$("cam").append(cam.canvas);running=true;$("startBtn").textContent="Kamerayı kapat";$("status").textContent="Renkli bir nesneyi kameraya göster.";loop()
+}catch(e){$("status").textContent="Kamera açılamadı. Tarayıcıda kamera iznini kontrol et ya da fotoğraf yükle."}};
+$("photo").onchange=async e=>{const f=e.target.files[0];if(!f)return;await load();const img=new Image();img.onload=async()=>{$("cam").innerHTML="";$("cam").append(img);show(await model.predict(img));$("status").textContent="Fotoğraf tahmin edildi."};img.src=URL.createObjectURL(f)};
+load().then(()=>{$("status").textContent="Model hazır. Kamerayı aç ya da fotoğraf yükle."}).catch(()=>{$("status").textContent="Model yüklenemedi, sayfayı yenile."});
+</script>
+</body></html>
